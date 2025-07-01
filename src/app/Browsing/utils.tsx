@@ -1,18 +1,18 @@
-import React from 'react';
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, vi } from "vitest";
-import Home from "./page";
 
-export let emailInput: HTMLElement;
-export let passwordInput: HTMLElement;
+import { fireEvent } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+
+export let emailInput: HTMLInputElement;
+export let passwordInput: HTMLInputElement;
 export let submitButton: HTMLElement;
 
-beforeEach(() => {
-    render(<Home />);
-    emailInput = screen.getByTestId('emailInput');
-    passwordInput = screen.getByTestId('passwordInput');
-    submitButton = screen.getByTestId('button');
-});
+// beforeEach(() => {
+//     render(<Home />);
+//     emailInput = screen.getByTestId('emailInput');
+//     passwordInput = screen.getByTestId('passwordInput');
+//     submitButton = screen.getByTestId('button');
+// });
 
 afterEach(() => {
     vi.clearAllMocks();
@@ -21,23 +21,24 @@ afterEach(() => {
 
 // Helper functions for better organization
 export const mockSuccessfulLogin = () => {
-    global.fetch = vi.fn(() =>
-        Promise.resolve({
-            ok: true,
-            status: 200,
-            json: () => Promise.resolve({ message: 'Login successful' }),
-        } as Response)
+    window.fetch = vi.fn(() =>
+        Promise.resolve(
+            new Response(JSON.stringify({ success: true }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" }
+            })
+        )
     ) as typeof fetch;
 };
 
 export const mockFailedLogin = (status = 401) => {
-    global.fetch = vi.fn(() =>
+    window.fetch = vi.fn(() =>
         Promise.reject(new Response(null, { status }))
     ) as typeof fetch;
 };
 
 export const mockDelayedResponse = (success = true, delay = 100) => {
-    global.fetch = vi.fn(() =>
+    window.fetch = vi.fn(() =>
         new Promise<Response>((resolve, reject) =>
             setTimeout(() => {
                 if (success) {
@@ -67,3 +68,5 @@ export const fillAndSubmitForm = (email: string, password: string) => {
     fillForm(email, password);
     submitForm();
 };
+
+export const noConnectionForm = () => window.fetch = vi.fn(() => Promise.reject(new Error('Network error')));

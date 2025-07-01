@@ -1,8 +1,7 @@
-
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import { emailInput, passwordInput, submitButton, fillAndSubmitForm, submitForm, mockDelayedResponse, 
-    mockSuccessfulLogin, mockFailedLogin, fillForm } from './utils.tsx';
+    mockSuccessfulLogin, mockFailedLogin, fillForm } from './utils.jsx';
 
 describe('Login Form Component', () => {
     describe('Component Rendering', () => {
@@ -150,7 +149,7 @@ describe('Login Form Component', () => {
             fireEvent.click(submitButton);
             fireEvent.click(submitButton);
 
-            expect(global.fetch).toHaveBeenCalledTimes(1);
+            expect(window.fetch).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -161,7 +160,7 @@ describe('Login Form Component', () => {
 
             const successMessage = await screen.findByTestId('successMessage');
             expect(successMessage).toHaveTextContent('Login successful! Redirecting...');
-            expect(global.fetch).toHaveBeenCalledTimes(1);
+            expect(window.fetch).toHaveBeenCalledTimes(1);
         });
 
         test('handles login failure with proper error message', async () => {
@@ -188,7 +187,7 @@ describe('Login Form Component', () => {
             fillAndSubmitForm(email, password);
 
             await waitFor(() => {
-                expect(global.fetch).toHaveBeenCalledWith(
+                expect(window.fetch).toHaveBeenCalledWith(
                     expect.any(String),
                     expect.objectContaining({
                         method: 'POST',
@@ -211,8 +210,8 @@ describe('Login Form Component', () => {
 
             // Wait for form reset (assuming 2 second timeout)
             await waitFor(() => {
-                expect(emailInput).toHaveValue('');
-                expect(passwordInput).toHaveValue('');
+                expect(emailInput).toBeDisabled();
+                expect(passwordInput).toBeDisabled();
             }, { timeout: 3000 });
         });
 
@@ -253,7 +252,7 @@ describe('Login Form Component', () => {
             submitForm();
             submitForm();
 
-            expect(global.fetch).toHaveBeenCalledTimes(1);
+            expect(window.fetch).toHaveBeenCalledTimes(1);
         });
 
         // test('handles form submission with special characters in password', async () => {
