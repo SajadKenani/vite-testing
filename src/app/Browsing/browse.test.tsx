@@ -25,6 +25,8 @@ describe("Browsing Testing", () => {
             expect(emailInput).toBeDisabled()
             expect(passwordInput).toBeDisabled()
             expect(submitButton).toBeDisabled()
+
+            expect(window.location.pathname).toBe("/")
         });
     }, 30000);
 
@@ -62,7 +64,7 @@ describe("Browsing Testing", () => {
     test("Invalid credentials - shows authentication error", async () => {
         screen = render(<Home />);
         mockFailedLogin(401)
-        
+
         const emailInput = screen.getByTestId('emailInput');
         const passwordInput = screen.getByTestId('passwordInput');
         const submitButton = screen.getByTestId('button');
